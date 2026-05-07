@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>November Studio — 客戶需求諮詢</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:#ffffff;color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;min-height:100vh}
+.wrap{max-width:480px;margin:0 auto;padding:0 0 60px}
+
+/* Header */
+.header{padding:36px 24px 24px;border-bottom:1px solid #ebebeb;display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.logo-mark{display:flex;align-items:flex-end;gap:8px}
+.logo-bars{display:flex;align-items:flex-end;gap:4px}
+.bar-dark{width:9px;height:48px;background:#1a1a1a}
+.bar-gray{width:9px;height:38px;background:#b0b0b0}
+.logo-text{line-height:1.2;font-size:14px;font-weight:700;letter-spacing:2.5px;color:#1a1a1a;text-transform:uppercase}
+.logo-text span{display:block}
+.logo-sub{font-weight:400;color:#888;letter-spacing:2px;font-size:13px}
+.header-desc{font-size:13px;color:#888;letter-spacing:.3px}
+
+/* Step bar */
+.step-bar{display:flex;padding:24px 24px 0;gap:4px}
+.step-seg{flex:1;height:2px;background:#e8e8e8;transition:background .3s}
+.step-seg.done{background:#1a1a1a}
+.step-label{padding:10px 24px 0;font-size:11px;color:#888;letter-spacing:.8px;text-transform:uppercase}
+
+/* Panel */
+.panel{padding:24px 24px 0;display:none}
+.panel.active{display:block}
+
+/* Fields */
+.field{margin-bottom:18px}
+.field label{display:block;font-size:11px;color:#888;letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px;font-weight:500}
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  border:1px solid #e0e0e0;
+  border-radius:8px;
+  padding:12px 14px;
+  font-size:15px;
+  color:#1a1a1a;
+  background:#ffffff;
+  outline:none;
+  font-family:inherit;
+  appearance:none;
+  -webkit-appearance:none;
+  transition:border-color .15s;
+}
+.field input:focus,
+.field textarea:focus,
+.field select:focus{border-color:#1a1a1a}
+.field textarea{resize:none;height:90px;line-height:1.6}
+.field input::placeholder,
+.field textarea::placeholder{color:#c0c0c0}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.field select option{color:#1a1a1a;background:#ffffff}
+
+/* Budget */
+.budget-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.budget-opt{
+  border:1px solid #e0e0e0;
+  border-radius:8px;
+  padding:12px;
+  font-size:13px;
+  color:#888888;
+  cursor:pointer;
+  text-align:center;
+  background:#ffffff;
+  transition:all .15s;
+  font-family:inherit;
+}
+.budget-opt.selected{border-color:#1a1a1a;color:#1a1a1a;background:#f5f5f5;font-weight:500}
+
+/* Space cards */
+.space-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.space-card{border:1px solid #e0e0e0;border-radius:10px;overflow:hidden;background:#ffffff;transition:border-color .15s}
+.space-card.checked{border-color:#1a1a1a}
+.space-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;user-select:none;background:#ffffff}
+.space-check{
+  width:18px;height:18px;border-radius:4px;
+  border:1.5px solid #d0d0d0;
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;
+  color:#ffffff;
+  background:#ffffff;
+  transition:all .15s;
+  font-weight:700;
+}
+.space-card.checked .space-check{background:#1a1a1a;border-color:#1a1a1a}
+.space-name{font-size:13px;color:#555555;font-weight:400}
+.space-card.checked .space-name{color:#1a1a1a;font-weight:500}
+.space-note{display:none;padding:0 14px 12px;background:#ffffff}
+.space-card.checked .space-note{display:block}
+.space-note textarea{
+  width:100%;border:none;
+  border-top:1px solid #f0f0f0;
+  padding:8px 0 0;
+  font-size:12px;color:#555555;
+  outline:none;font-family:inherit;
+  resize:none;height:54px;
+  line-height:1.5;background:transparent;
+}
+.space-note textarea::placeholder{color:#c8c8c8}
+
+/* Upload */
+.upload-zone{
+  border:1.5px dashed #d8d8d8;
+  border-radius:10px;
+  padding:28px 16px;
+  text-align:center;
+  cursor:pointer;
+  background:#fafafa;
+  position:relative;
+  transition:border-color .15s;
+}
+.upload-zone:hover{border-color:#aaaaaa;background:#f5f5f5}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-title{font-size:14px;font-weight:500;color:#1a1a1a;margin-bottom:4px}
+.upload-sub{font-size:12px;color:#999999}
+.upload-file{
+  display:none;align-items:center;gap:12px;
+  padding:13px 16px;
+  background:#f8f8f8;
+  border-radius:8px;
+  border:1px solid #e8e8e8;
+  margin-top:10px;
+}
+.upload-file.show{display:flex}
+.file-icon{font-size:18px;flex-shrink:0}
+.file-name{flex:1;font-size:13px;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:400}
+.file-remove{
+  background:none;border:none;
+  color:#aaaaaa;cursor:pointer;
+  font-size:22px;padding:0;line-height:1;
+  font-family:inherit;
+}
+.file-remove:hover{color:#e05550}
+
+/* Buttons */
+.btn-row{display:flex;gap:10px;margin-top:24px}
+.btn-next{
+  flex:1;
+  padding:15px 20px;
+  background:#1a1a1a;
+  color:#ffffff;
+  border:none;
+  border-radius:8px;
+  font-size:15px;
+  font-weight:500;
+  cursor:pointer;
+  font-family:inherit;
+  letter-spacing:.3px;
+}
+.btn-next:active{opacity:.8}
+.btn-back{
+  padding:15px 20px;
+  background:#ffffff;
+  border:1px solid #d8d8d8;
+  border-radius:8px;
+  font-size:15px;
+  color:#555555;
+  cursor:pointer;
+  font-family:inherit;
+  white-space:nowrap;
+}
+.btn-back:active{background:#f5f5f5}
+
+/* Success */
+.success{padding:56px 24px;text-align:center;display:none;flex-direction:column;align-items:center}
+.success-mark{
+  width:56px;height:56px;border-radius:50%;
+  background:#1a1a1a;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 24px;
+  font-size:24px;color:#ffffff;
+}
+.success h2{font-size:20px;font-weight:500;color:#1a1a1a;margin-bottom:10px}
+.success p{font-size:14px;color:#888888;line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="logo-mark">
+      <div class="logo-bars">
+        <div class="bar-dark"></div>
+        <div class="bar-gray"></div>
+      </div>
+      <div class="logo-text">
+        <span>NOV</span>
+        <span>EMBER</span>
+        <span class="logo-sub">STUDIO</span>
+      </div>
+    </div>
+    <div class="header-desc">客戶需求諮詢</div>
+  </div>
+
+  <div class="step-bar" id="step-bar">
+    <div class="step-seg done" id="seg-0"></div>
+    <div class="step-seg" id="seg-1"></div>
+    <div class="step-seg" id="seg-2"></div>
+    <div class="step-seg" id="seg-3"></div>
+  </div>
+  <div class="step-label" id="step-label">基本資料</div>
+
+  <!-- Step 0 -->
+  <div class="panel active" id="panel-0">
+    <div class="field"><label>姓名</label><input type="text" id="f-name" placeholder="您的稱呼"></div>
+    <div class="field"><label>聯絡電話</label><input type="tel" id="f-phone" placeholder="09xx-xxx-xxx" inputmode="tel"></div>
+    <div class="field"><label>Email</label><input type="email" id="f-email" placeholder="your@email.com" inputmode="email"></div>
+    <div class="field">
+      <label>方便聯絡的時間</label>
+      <select id="f-contact-time">
+        <option value="">請選擇</option>
+        <option>平日上午 09:00–12:00</option>
+        <option>平日下午 12:00–18:00</option>
+        <option>平日晚上 18:00–21:00</option>
+        <option>週末上午 09:00–12:00</option>
+        <option>週末下午 12:00–18:00</option>
+        <option>任何時間皆可</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn-next" onclick="next(0)">下一步</button>
+    </div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="panel" id="panel-1">
+    <div class="field">
+      <label>空間類型</label>
+      <select id="f-type" onchange="handleTypeChange(this.value)">
+        <option value="">請選擇</option>
+        <option>住宅（新屋）</option>
+        <option>住宅（預售屋）</option>
+        <option>住宅（老屋翻新）</option>
+        <option>商業空間</option>
+        <option>辦公室</option>
+        <option>其他</option>
+      </select>
+    </div>
+    <div class="field"><label>坪數</label><input type="text" id="f-size" placeholder="例：30 坪"></div>
+    <div class="field">
+      <label>預算範圍</label>
+      <div class="budget-grid">
+        <div class="budget-opt" onclick="selectBudget(this)">100 萬以下</div>
+        <div class="budget-opt" onclick="selectBudget(this)">100–200 萬</div>
+        <div class="budget-opt" onclick="selectBudget(this)">200–400 萬</div>
+        <div class="budget-opt" onclick="selectBudget(this)">400 萬以上</div>
+      </div>
+    </div>
+    <div class="field" id="field-date">
+      <label>希望完成日期</label>
+      <input type="date" id="f-date">
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="back(1)">上一步</button>
+      <button class="btn-next" onclick="next(1)">下一步</button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="panel" id="panel-2">
+    <div class="field">
+      <label>勾選施工空間，可備註特殊需求</label>
+      <div class="space-grid">
+        <div class="space-card" id="sc-0"><div class="space-header" onclick="toggleSpace(0)"><div class="space-check">✓</div><div class="space-name">玄關</div></div><div class="space-note"><textarea placeholder="特殊需求（選填）"></textarea></div></div>
+        <div class="space-card" id="sc-1"><div class="space-header" onclick="toggleSpace(1)"><div class="space-check">✓</div><div class="space-name">客廳</div></div><div class="space-note"><textarea placeholder="特殊需求（選填）"></textarea></div></div>
+        <div class="space-card" id="sc-2"><div class="space-header" onclick="toggleSpace(2)"><div class="space-check">✓</div><div class="space-name">廚房</div></div><div class="space-note"><textarea placeholder="特殊需求（選填）"></textarea></div></div>
+        <div class="space-card" id="sc-3"><div class="space-header" onclick="toggleSpace(3)"><div class="space-check">✓</div><div class="space-name">餐廳</div></div><div class="space-note"><textarea placeholder="特殊需求（選填）"></textarea></div></div>
+        <div class="space-card" id="sc-4"><div class="space-header" onclick="toggleSpace(4)"><div class="space-check">✓</div><div class="space-name">主臥室</div></div><div class="space-note"><textarea placeholder="特殊需求（選填）"></textarea></div></div>
+        <div class="space-card" id="sc-5"><div class="space-header" onclick="toggleSpace(5)"><div class="space-check">✓</div><div class="space-name">次臥室</div></div><div class="space-note"><textarea placeholder="特殊需求（選填）"></textarea></div></div>
+        <div class="space-card" id="sc-6"><div class="space-header" onclick="toggleSpace(6)"><div class="space-check">✓</div><div class="space-name">書房</div></div><div class="space-note"><textarea placeholder="特殊需求（選填）"></textarea></div></div>
+        <div class="space-card" id="sc-7"><div class="space-header" onclick="toggleSpace(7)"><div class="space-check">✓</div><div class="space-name">更衣室</div></div><div class="space-note"><textarea placeholder="特殊需求（選填）"></textarea></div></div>
+        <div class="space-card" id="sc-8"><div class="space-header" onclick="toggleSpace(8)"><div class="space-check">✓</div><div class="space-name">主浴</div></div><div class="space-note"><textarea placeholder="特殊需求（選填）"></textarea></div></div>
+        <div class="space-card" id="sc-9"><div class="space-header" onclick="toggleSpace(9)"><div class="space-check">✓</div><div class="space-name">客浴</div></div><div class="space-note"><textarea placeholder="特殊需求（選填）"></textarea></div></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="back(2)">上一步</button>
+      <button class="btn-next" onclick="next(2)">下一步</button>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="panel" id="panel-3">
+    <div class="field">
+      <label>整體需求說明</label>
+      <textarea id="f-desc" placeholder="風格偏好、特殊需求或其他說明…" style="height:110px"></textarea>
+    </div>
+    <div class="field">
+      <label>上傳需求文件（PDF，選填）</label>
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" id="f-pdf" accept=".pdf" onchange="handleFile(this)" onclick="event.stopPropagation()">
+        <div class="upload-title">點擊上傳 PDF</div>
+        <div class="upload-sub">最大 10MB</div>
+      </div>
+      <div class="upload-file" id="upload-file">
+        <span class="file-icon">📄</span>
+        <span class="file-name" id="file-name"></span>
+        <button class="file-remove" onclick="removeFile()">×</button>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="back(3)">上一步</button>
+      <button class="btn-next" onclick="submitForm()">送出需求</button>
+    </div>
+  </div>
+
+  <div class="success" id="success">
+    <div class="success-mark">✓</div>
+    <h2>感謝您的諮詢</h2>
+    <p>我們已收到您的需求<br>將於 1–2 個工作天內與您聯繫</p>
+  </div>
+
+</div>
+<script>
+const LABELS=['基本資料','空間資訊','空間需求','補充說明'];
+let selectedBudget='';
+let uploadedFile=null;
+
+function updateBar(step){
+  for(let i=0;i<4;i++){
+    document.getElementById('seg-'+i).className='step-seg'+(i<=step?' done':'');
+  }
+  document.getElementById('step-label').textContent=LABELS[step];
+}
+
+function selectBudget(el){
+  document.querySelectorAll('.budget-opt').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedBudget=el.textContent;
+}
+
+function handleTypeChange(val){
+  const fd=document.getElementById('field-date');
+  fd.style.display=val==='住宅（預售屋）'?'none':'block';
+  if(val==='住宅（預售屋）')document.getElementById('f-date').value='';
+}
+
+function toggleSpace(idx){
+  document.getElementById('sc-'+idx).classList.toggle('checked');
+}
+
+function handleFile(input){
+  const file=input.files[0];
+  if(!file)return;
+  if(file.type!=='application/pdf'){alert('只接受 PDF 檔案');input.value='';return;}
+  if(file.size>10*1024*1024){alert('檔案大小不可超過 10MB');input.value='';return;}
+  uploadedFile=file;
+  document.getElementById('file-name').textContent=file.name;
+  document.getElementById('upload-file').classList.add('show');
+  document.getElementById('upload-zone').style.display='none';
+}
+
+function removeFile(){
+  uploadedFile=null;
+  document.getElementById('f-pdf').value='';
+  document.getElementById('upload-file').classList.remove('show');
+  document.getElementById('upload-zone').style.display='block';
+}
+
+function next(from){
+  if(from===0){
+    if(!document.getElementById('f-name').value.trim()||
+       !document.getElementById('f-phone').value.trim()||
+       !document.getElementById('f-email').value.trim()){
+      alert('請填寫完整基本資料');return;
+    }
+    if(!document.getElementById('f-contact-time').value){
+      alert('請選擇方便聯絡的時間');return;
+    }
+  }
+  if(from===1){
+    if(!document.getElementById('f-type').value){alert('請選擇空間類型');return;}
+  }
+  if(from===2){
+    let any=false;
+    for(let i=0;i<10;i++){if(document.getElementById('sc-'+i).classList.contains('checked')){any=true;break;}}
+    if(!any){alert('請至少勾選一個施工空間');return;}
+  }
+  document.getElementById('panel-'+from).classList.remove('active');
+  document.getElementById('panel-'+(from+1)).classList.add('active');
+  updateBar(from+1);
+  window.scrollTo(0,0);
+}
+
+function back(from){
+  document.getElementById('panel-'+from).classList.remove('active');
+  document.getElementById('panel-'+(from-1)).classList.add('active');
+  updateBar(from-1);
+  window.scrollTo(0,0);
+}
+
+function submitForm(){
+  const spaces=[];
+  for(let i=0;i<10;i++){
+    const card=document.getElementById('sc-'+i);
+    if(card.classList.contains('checked')){
+      const name=card.querySelector('.space-name').textContent;
+      const note=card.querySelector('textarea').value.trim();
+      spaces.push(note?name+'（'+note+'）':name);
+    }
+  }
+  const isPresale=document.getElementById('f-type').value==='住宅（預售屋）';
+  const params={
+    from_name:document.getElementById('f-name').value,
+    phone:document.getElementById('f-phone').value,
+    reply_to:document.getElementById('f-email').value,
+    contact_time:document.getElementById('f-contact-time').value,
+    space_type:document.getElementById('f-type').value,
+    size:document.getElementById('f-size').value||'未填寫',
+    budget:selectedBudget||'未填寫',
+    complete_date:isPresale?'預售屋（待確認）':document.getElementById('f-date').value||'未填寫',
+    spaces:spaces.join('、'),
+    description:document.getElementById('f-desc').value||'無',
+    attachment:uploadedFile?uploadedFile.name:'無',
+    submit_time:new Date().toLocaleString('zh-TW')
+  };
+
+  const btn=document.querySelector('#panel-3 .btn-next');
+  btn.textContent='寄送中…';
+  btn.disabled=true;
+
+  emailjs.send('service_b6c15pa','template_e4l6b9q',params)
+    .then(()=>{
+      document.getElementById('step-bar').style.display='none';
+      document.querySelector('.step-label').style.display='none';
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      document.getElementById('success').style.display='flex';
+    })
+    .catch((err)=>{
+      console.error('EmailJS error',err);
+      btn.textContent='送出需求';
+      btn.disabled=false;
+      alert('寄送失敗，請稍後再試。錯誤：'+JSON.stringify(err));
+    });
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init({publicKey:'qsuYUnIx08vA6_5Ju'});</script>
+</body>
+</html>
