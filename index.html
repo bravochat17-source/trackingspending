@@ -34,9 +34,9 @@ html,body{background:#0e0e0e;color:#f0f0f0;font-family:-apple-system,BlinkMacSys
 .field input::placeholder{color:#555}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .add-actions{display:flex;align-items:center;gap:10px;margin-top:6px}
-.btn-primary{flex:1;padding:14px;background:#f0f0f0;color:#0e0e0e;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;letter-spacing:.3px}
+.btn-primary{flex:1;padding:16px;background:#f0f0f0;color:#0e0e0e;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:.3px;box-shadow:0 4px 12px rgba(240,240,240,0.15),0 2px 4px rgba(0,0,0,0.4)}
 .btn-primary:active{opacity:.85}
-.btn-export{background:transparent;border:1px solid #333;border-radius:8px;padding:10px 14px;font-size:12px;color:#555;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;line-height:1}
+.btn-export{background:transparent;border:1px solid #333;border-radius:8px;padding:10px 14px;font-size:12px;color:#555;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;line-height:1;box-shadow:0 2px 6px rgba(0,0,0,0.4)}
 .settle-btn{width:100%;margin-top:10px;padding:12px;background:transparent;border:1px solid #444;border-radius:8px;font-size:13px;color:#888;cursor:pointer;letter-spacing:.3px}
 .settle-btn:active{background:#1a1a1a}
 .settled-badge{display:inline-block;font-size:11px;color:#3aa87a;background:#0e2018;border-radius:4px;padding:2px 8px;margin-left:8px;vertical-align:middle}
@@ -165,14 +165,9 @@ html,body{background:#0e0e0e;color:#f0f0f0;font-family:-apple-system,BlinkMacSys
         </svg>
         Excel
       </button>
-      <button class="btn-export" onclick="exportCSV()">
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8 2v8M5 7l3 3 3-3"/><rect x="2" y="11" width="12" height="3" rx="1"/>
-        </svg>
-        CSV
-      </button>
+      <button id="settle-btn" onclick="settleMonth()" style="background:#c04040;border:none;border-radius:8px;padding:10px 14px;font-size:12px;color:#fff;cursor:pointer;font-weight:500;letter-spacing:.3px;box-shadow:0 3px 8px rgba(192,64,64,0.4),0 1px 3px rgba(0,0,0,0.4);white-space:nowrap">結算本月</button>
     </div>
-    <button class="settle-btn" id="settle-btn" onclick="settleMonth()">結算本月</button>
+
     <div style="font-size:11px;color:#555;margin-top:8px;text-align:center" id="settle-hint"></div>
   </div>
 
@@ -611,6 +606,39 @@ function updateAll(){
   if(t==='list')renderList();
   if(t==='stats')renderStats();
   if(t==='year')renderYear();
+}
+
+
+function importInitData(){
+  const DATA=[
+    {id:1746835200000,amount:894,category:"個人吃飯",desc:"全聯",date:"2026-05-10"},
+    {id:1746835200001,amount:222,category:"個人吃飯",desc:"",date:"2026-05-10"},
+    {id:1746835200002,amount:360,category:"個人吃飯",desc:"",date:"2026-05-09"},
+    {id:1746835200003,amount:20,category:"個人吃飯",desc:"",date:"2026-05-08"},
+    {id:1746835200004,amount:15,category:"個人吃飯",desc:"綠茶",date:"2026-05-08"},
+    {id:1746835200005,amount:206,category:"個人吃飯",desc:"Uber晚餐",date:"2026-05-07"},
+    {id:1746835200006,amount:540,category:"個人吃飯",desc:"全聯",date:"2026-05-07"},
+    {id:1746835200007,amount:800,category:"汽車加油或保養",desc:"",date:"2026-05-08"},
+    {id:1746835200008,amount:599,category:"遊戲",desc:"",date:"2026-05-10"},
+    {id:1746835200009,amount:474,category:"遊戲",desc:"",date:"2026-05-09"},
+    {id:1746835200010,amount:245,category:"遊戲",desc:"",date:"2026-05-07"},
+    {id:1746835200011,amount:110,category:"社交",desc:"",date:"2026-05-08"},
+    {id:1746835200012,amount:1551,category:"社交",desc:"",date:"2026-05-08"},
+    {id:1746835200013,amount:230,category:"社交",desc:"Humble",date:"2026-05-07"},
+    {id:1746835200014,amount:714,category:"寵物用品",desc:"貓砂",date:"2026-05-10"},
+    {id:1746835200015,amount:552,category:"寵物用品",desc:"寵物罐頭",date:"2026-05-07"},
+  ];
+  const existing=JSON.parse(localStorage.getItem('dark_exp')||'[]');
+  const existingIds=new Set(existing.map(r=>r.id));
+  const toAdd=DATA.filter(r=>!existingIds.has(r.id));
+  if(!toAdd.length){toast('資料已匯入過');return;}
+  const merged=[...existing,...toAdd].sort((a,b)=>b.date.localeCompare(a.date));
+  localStorage.setItem('dark_exp',JSON.stringify(merged));
+  records=merged;
+  document.getElementById('import-init-btn').textContent='✓ 已匯入';
+  document.getElementById('import-init-btn').disabled=true;
+  updateAll();
+  toast('5月資料匯入成功！共'+toAdd.length+'筆');
 }
 
 document.getElementById('inp-date').value=today();
