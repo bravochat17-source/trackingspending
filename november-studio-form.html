@@ -11,7 +11,6 @@
 html,body{background:#ffffff;color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;min-height:100vh}
 .wrap{max-width:480px;margin:0 auto;padding:0 0 60px}
 
-/* Header */
 .header{padding:36px 24px 24px;border-bottom:1px solid #ebebeb;display:flex;flex-direction:column;align-items:flex-start;gap:14px}
 .logo-mark{display:flex;align-items:flex-end;gap:8px}
 .logo-bars{display:flex;align-items:flex-end;gap:4px}
@@ -22,17 +21,14 @@ html,body{background:#ffffff;color:#1a1a1a;font-family:-apple-system,BlinkMacSys
 .logo-sub{font-weight:400;color:#888;letter-spacing:2px;font-size:13px}
 .header-desc{font-size:13px;color:#888;letter-spacing:.3px}
 
-/* Step bar */
 .step-bar{display:flex;padding:24px 24px 0;gap:4px}
 .step-seg{flex:1;height:2px;background:#e8e8e8;transition:background .3s}
 .step-seg.done{background:#1a1a1a}
 .step-label{padding:10px 24px 0;font-size:11px;color:#888;letter-spacing:.8px;text-transform:uppercase}
 
-/* Panel */
 .panel{padding:24px 24px 0;display:none}
 .panel.active{display:block}
 
-/* Fields */
 .field{margin-bottom:18px}
 .field label{display:block;font-size:11px;color:#888;letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px;font-weight:500}
 .field input,
@@ -60,7 +56,6 @@ html,body{background:#ffffff;color:#1a1a1a;font-family:-apple-system,BlinkMacSys
 .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
 .field select option{color:#1a1a1a;background:#ffffff}
 
-/* Budget */
 .budget-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .budget-opt{
   border:1px solid #e0e0e0;
@@ -76,7 +71,6 @@ html,body{background:#ffffff;color:#1a1a1a;font-family:-apple-system,BlinkMacSys
 }
 .budget-opt.selected{border-color:#1a1a1a;color:#1a1a1a;background:#f5f5f5;font-weight:500}
 
-/* Space cards */
 .space-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .space-card{border:1px solid #e0e0e0;border-radius:10px;overflow:hidden;background:#ffffff;transition:border-color .15s}
 .space-card.checked{border-color:#1a1a1a}
@@ -108,7 +102,6 @@ html,body{background:#ffffff;color:#1a1a1a;font-family:-apple-system,BlinkMacSys
 }
 .space-note textarea::placeholder{color:#c8c8c8}
 
-/* Upload */
 .upload-zone{
   border:1.5px dashed #d8d8d8;
   border-radius:10px;
@@ -142,7 +135,6 @@ html,body{background:#ffffff;color:#1a1a1a;font-family:-apple-system,BlinkMacSys
 }
 .file-remove:hover{color:#e05550}
 
-/* Buttons */
 .btn-row{display:flex;gap:10px;margin-top:24px}
 .btn-next{
   flex:1;
@@ -171,7 +163,6 @@ html,body{background:#ffffff;color:#1a1a1a;font-family:-apple-system,BlinkMacSys
 }
 .btn-back:active{background:#f5f5f5}
 
-/* Success */
 .success{padding:56px 24px;text-align:center;display:none;flex-direction:column;align-items:center}
 .success-mark{
   width:56px;height:56px;border-radius:50%;
@@ -240,12 +231,27 @@ html,body{background:#ffffff;color:#1a1a1a;font-family:-apple-system,BlinkMacSys
         <option value="">請選擇</option>
         <option>住宅（新屋）</option>
         <option>住宅（預售屋）</option>
+        <option>住宅（預售屋-客變）</option>
         <option>住宅（老屋翻新）</option>
+        <option>自地自建</option>
         <option>商業空間</option>
         <option>辦公室</option>
         <option>其他</option>
       </select>
     </div>
+
+    <!-- 新增：案件地區 -->
+    <div class="field">
+      <label>案件地區</label>
+      <input type="text" id="f-region" placeholder="例：台北市大安區">
+    </div>
+
+    <!-- 新增：案場名稱（老屋翻新、自地自建 時隱藏） -->
+    <div class="field" id="field-project-name">
+      <label>案場名稱</label>
+      <input type="text" id="f-project-name" placeholder="例：信義 ×× 建案">
+    </div>
+
     <div class="field"><label>坪數</label><input type="text" id="f-size" placeholder="例：30 坪"></div>
     <div class="field">
       <label>預算範圍</label>
@@ -256,10 +262,18 @@ html,body{background:#ffffff;color:#1a1a1a;font-family:-apple-system,BlinkMacSys
         <div class="budget-opt" onclick="selectBudget(this)">400 萬以上</div>
       </div>
     </div>
+
+    <!-- 新增：預計交屋日期（預售屋、新屋、自地自建才顯示） -->
+    <div class="field" id="field-handover">
+      <label id="label-handover">預計交屋日期</label>
+      <input type="date" id="f-handover">
+    </div>
+
     <div class="field" id="field-date">
       <label>希望完成日期</label>
       <input type="date" id="f-date">
     </div>
+
     <div class="btn-row">
       <button class="btn-back" onclick="back(1)">上一步</button>
       <button class="btn-next" onclick="next(1)">下一步</button>
@@ -326,6 +340,13 @@ const LABELS=['基本資料','空間資訊','空間需求','補充說明'];
 let selectedBudget='';
 let uploadedFile=null;
 
+// 不需要填案場名稱的類型
+const NO_PROJECT_NAME_TYPES=['住宅（老屋翻新）','自地自建'];
+// 需要顯示交屋日期的類型
+const SHOW_HANDOVER_TYPES=['住宅（預售屋）','住宅（預售屋-客變）','住宅（新屋）','自地自建'];
+// 預售屋不需填寫完成日期
+const NO_COMPLETE_DATE_TYPES=['住宅（預售屋）','住宅（預售屋-客變）'];
+
 function updateBar(step){
   for(let i=0;i<4;i++){
     document.getElementById('seg-'+i).className='step-seg'+(i<=step?' done':'');
@@ -340,9 +361,34 @@ function selectBudget(el){
 }
 
 function handleTypeChange(val){
+  // 案場名稱：老屋翻新、自地自建 → 隱藏
+  const fpn=document.getElementById('field-project-name');
+  if(NO_PROJECT_NAME_TYPES.includes(val)){
+    fpn.style.display='none';
+    document.getElementById('f-project-name').value='';
+  } else {
+    fpn.style.display='block';
+  }
+
+  // 預計交屋日期：特定類型才顯示，客變時換標籤文字
+  const fh=document.getElementById('field-handover');
+  const lh=document.getElementById('label-handover');
+  if(SHOW_HANDOVER_TYPES.includes(val)){
+    fh.style.display='block';
+    lh.textContent=val==='住宅（預售屋-客變）'?'預計客變截止日期':'預計交屋日期';
+  } else {
+    fh.style.display='none';
+    document.getElementById('f-handover').value='';
+  }
+
+  // 希望完成日期：預售屋隱藏
   const fd=document.getElementById('field-date');
-  fd.style.display=val==='住宅（預售屋）'?'none':'block';
-  if(val==='住宅（預售屋）')document.getElementById('f-date').value='';
+  if(NO_COMPLETE_DATE_TYPES.includes(val)){
+    fd.style.display='none';
+    document.getElementById('f-date').value='';
+  } else {
+    fd.style.display='block';
+  }
 }
 
 function toggleSpace(idx){
@@ -380,6 +426,7 @@ function next(from){
   }
   if(from===1){
     if(!document.getElementById('f-type').value){alert('請選擇空間類型');return;}
+    if(!document.getElementById('f-region').value.trim()){alert('請填寫案件地區');return;}
   }
   if(from===2){
     let any=false;
@@ -409,15 +456,22 @@ function submitForm(){
       spaces.push(note?name+'（'+note+'）':name);
     }
   }
-  const isPresale=document.getElementById('f-type').value==='住宅（預售屋）';
+  const spaceType=document.getElementById('f-type').value;
+  const isPresale=spaceType==='住宅（預售屋）';
+  const showHandover=SHOW_HANDOVER_TYPES.includes(spaceType);
+  const showProjectName=!NO_PROJECT_NAME_TYPES.includes(spaceType);
+
   const params={
     from_name:document.getElementById('f-name').value,
     phone:document.getElementById('f-phone').value,
     reply_to:document.getElementById('f-email').value,
     contact_time:document.getElementById('f-contact-time').value,
-    space_type:document.getElementById('f-type').value,
+    space_type:spaceType,
+    region:document.getElementById('f-region').value||'未填寫',
+    project_name:showProjectName?(document.getElementById('f-project-name').value||'未填寫'):'不適用',
     size:document.getElementById('f-size').value||'未填寫',
     budget:selectedBudget||'未填寫',
+    handover_date:showHandover?(document.getElementById('f-handover').value||'未填寫'):'不適用',
     complete_date:isPresale?'預售屋（待確認）':document.getElementById('f-date').value||'未填寫',
     spaces:spaces.join('、'),
     description:document.getElementById('f-desc').value||'無',
@@ -443,6 +497,9 @@ function submitForm(){
       alert('寄送失敗，請稍後再試。錯誤：'+JSON.stringify(err));
     });
 }
+
+// 初始化：依照預設值（空值）統一設定欄位顯示狀態
+handleTypeChange('');
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>emailjs.init({publicKey:'qsuYUnIx08vA6_5Ju'});</script>
