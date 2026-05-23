@@ -173,6 +173,18 @@ html,body{background:#ffffff;color:#1a1a1a;font-family:-apple-system,BlinkMacSys
 }
 .success h2{font-size:20px;font-weight:500;color:#1a1a1a;margin-bottom:10px}
 .success p{font-size:14px;color:#888888;line-height:1.9}
+
+.field input[type="date"]{
+  -webkit-appearance:auto;
+  appearance:auto;
+  color:#1a1a1a;
+  min-height:48px;
+  cursor:pointer;
+}
+.field input[type="date"]::-webkit-date-and-time-value{
+  text-align:left;
+  margin:0;
+}
 </style>
 </head>
 <body>
@@ -343,9 +355,9 @@ let uploadedFile=null;
 // 不需要填案場名稱的類型
 const NO_PROJECT_NAME_TYPES=['住宅（老屋翻新）','自地自建'];
 // 需要顯示交屋日期的類型
-const SHOW_HANDOVER_TYPES=['住宅（預售屋）','住宅（預售屋-客變）','住宅（新屋）','自地自建'];
+const SHOW_HANDOVER_TYPES=['住宅（預售屋）','住宅（預售屋-客變）','住宅（新屋）','自地自建','商業空間','辦公室'];
 // 預售屋不需填寫完成日期
-const NO_COMPLETE_DATE_TYPES=['住宅（預售屋）','住宅（預售屋-客變）'];
+const NO_COMPLETE_DATE_TYPES=['住宅（預售屋-客變）'];
 
 function updateBar(step){
   for(let i=0;i<4;i++){
@@ -457,9 +469,10 @@ function submitForm(){
     }
   }
   const spaceType=document.getElementById('f-type').value;
-  const isPresale=spaceType==='住宅（預售屋）';
+  const noCompleteDate=NO_COMPLETE_DATE_TYPES.includes(spaceType);
   const showHandover=SHOW_HANDOVER_TYPES.includes(spaceType);
   const showProjectName=!NO_PROJECT_NAME_TYPES.includes(spaceType);
+  const isKaibian=spaceType==='住宅（預售屋-客變）';
 
   const params={
     from_name:document.getElementById('f-name').value,
@@ -471,8 +484,9 @@ function submitForm(){
     project_name:showProjectName?(document.getElementById('f-project-name').value||'未填寫'):'不適用',
     size:document.getElementById('f-size').value||'未填寫',
     budget:selectedBudget||'未填寫',
+    handover_date_label:isKaibian?'預計客變截止日期':'預計交屋日期',
     handover_date:showHandover?(document.getElementById('f-handover').value||'未填寫'):'不適用',
-    complete_date:isPresale?'預售屋（待確認）':document.getElementById('f-date').value||'未填寫',
+    complete_date:noCompleteDate?'不適用':document.getElementById('f-date').value||'未填寫',
     spaces:spaces.join('、'),
     description:document.getElementById('f-desc').value||'無',
     attachment:uploadedFile?uploadedFile.name:'無',
@@ -500,6 +514,13 @@ function submitForm(){
 
 // 初始化：依照預設值（空值）統一設定欄位顯示狀態
 handleTypeChange('');
+// 設定日期欄位最小值為今天
+(function(){
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('f-handover').min=today;
+  document.getElementById('f-date').min=today;
+})();
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>emailjs.init({publicKey:'qsuYUnIx08vA6_5Ju'});</script>
